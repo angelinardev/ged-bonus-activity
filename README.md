@@ -17,10 +17,12 @@ The player movement code comes from my GDW game, which I implemented.
 Singleton for health manager:
 There is a single instance of a health manager attached to an empty Game Manager object.
 In the script, I make sure there is an instance with:
+
 if (!instance)
         {
             instance = this;
         }
+
 
 Since this script is only attached to one object, there should be only one instance.
 I call this instance in the PlayerController when a player collides with an enemy to remove health:
@@ -35,9 +37,7 @@ if (other.collider.tag == "Enemy") //player hits the enemy
             dir = -dir.normalized;
             // And finally we add force in the direction of dir and multiply it by force. 
             other.gameObject.GetComponent<Rigidbody>().AddForce(dir *force);
-
-
-        }
+	}
 
 There is a single enemy at the top, as a cube (doesn't move or do anything, but will damage the player if
 the player touches it. The player is also slightly pushed upwards).
@@ -70,6 +70,19 @@ done (so in this case, when the user destroys a block so that we can add it to t
 and then to call the Undo command when the undo key is pressed.
 There is also only one instance of the CommandInvoker class needed, which saves on memory too.
 
+So, when breaking a block:
+
+//create new command, using data from collided object
+ command = new BlockPlacer(other.transform.position, other.transform);
+ //adds to list
+ commandinstance.AddCommand(command);
+
+When doing undo:
+
+commandinstance.UndoCommand(lastRemoved);
+
+
+And then the commandinstance will run the Execute/Undo commands based on a commandHistory list.
 
 I had to reverse the code that was given during the lab (so in this case, executing
 the command removes the item from the list, and undoing adds the item to the list).
